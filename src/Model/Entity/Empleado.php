@@ -28,4 +28,9 @@ class Empleado extends Entity
         'nombre' => true,
         'apellido' => true
     ];
+
+    public function _getPresentacion()
+    {
+        return $this->nombre . ' ' . $this->apellido;
+    }
 }
