@@ -52,7 +52,7 @@ Router::scope('/', function (RouteBuilder $routes) {
      */
     $routes->connect('/', [
         'controller' => 'Empleados',
-        'action' => 'add'
+        'action' => 'home'
     ]);
     
     /**
