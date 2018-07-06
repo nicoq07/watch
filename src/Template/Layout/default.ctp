@@ -33,17 +33,15 @@ $cakeDescription = 'Reporte de Horarios';
     <?=$this->fetch('script')?>
 </head>
 <body>
-    <nav class="top-bar expanded" data-topbar role="navigation">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" data-topbar role="navigation">
         <ul class="title-area large-3 medium-4 columns">
             <li class="name">
                 <h1><a href=""><?=$this->fetch('title')?></a></h1>
             </li>
         </ul>
-        <div class="top-bar-section">
-            <ul class="right">
-                <li><a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a></li>
-            </ul>
-        </div>
+                <a  href="#">Alta empleado</a>
+          <a  href="#">Generar reporte</a>
+         
     </nav>
     <?=$this->Flash->render()?>
     <div class="container clearfix">
