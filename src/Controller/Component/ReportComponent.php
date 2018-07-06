@@ -6,10 +6,6 @@ use Cake\Controller\Component;
 class ReportComponent extends Component
 {
 
-    private $dat = $_FILES['dat'];
-
-    private $procesar = $_POST['procesar'];
-
     private $days = [
         'Monday' => 'Lunes',
         'Tuesday' => 'Martes',
@@ -18,28 +14,6 @@ class ReportComponent extends Component
         'Friday' => 'Viernes'
     ];
 
-    // if (! empty($procesar)) {
-    
-    // if (! empty($dat) && $dat['error'] == 0) {
-    // $checkCopy = copy($dat['tmp_name'], PATH_ARCHIVOS);
-    
-    // if (! $checkCopy) {
-    // echo "Error copiando el archivo, reintente por favor";
-    // error_log(date('d-m-Y , h:i:s') . ": No se copió el archivo. \n ", 3, LOGEO);
-    // die();
-    // }
-    
-    // $reporte = crearReporte(PATH_ARCHIVOS, $days);
-    
-    // if (! $reporte) {
-    // echo "Error generando el reporte, reintente por favor";
-    // error_log(date('d-m-Y , h:i:s') . ": Error generando el reporte, reintente por favor. \n", 3, LOGEO);
-    // die();
-    // }
-    
-    // mostrarReporte($reporte);
-    // }
-    // }
     public function leerDat($ruta)
     {
         $lineas = null;
@@ -61,32 +35,74 @@ class ReportComponent extends Component
         return false;
     }
 
-    public function procesarDat($ruta, $days)
+    public function procesarDat(string $ruta)
     {
-        $array_lineas = leerDat($ruta);
-        if (! $array_lineas) {
+        $array_lineas = $this->leerDat($ruta);
+        if (empty($array_lineas)) {
+            error_log(date('d-m-Y , h:i:s') . ": Error al leer el dat. \n ", 3, LOGEO);
+            
             return false;
         }
-        $legajos = traerLegajos($array_lineas);
-        if (! $legajos) {
-            return false;
-        }
-        $legajoDias = agruparDiasLegajos($legajos, $array_lineas);
-        if (! $legajoDias) {
-            return false;
-        }
-        $listaOrdenada = ordenarPorDia($legajoDias);
-        if (! $listaOrdenada) {
-            return false;
-        }
-        $diasTrabajados = traerDias($listaOrdenada);
         
-        $diasCompletos = agruparDiasHoras($legajos, $diasTrabajados, $listaOrdenada, $days);
-        echo '<pre>';
-        print_r($diasCompletos);
-        die();
+        $legajos = $this->traerLegajos($array_lineas);
+        if (empty($legajos)) {
+            error_log(date('d-m-Y , h:i:s') . ": Error al traer legajos. \n ", 3, LOGEO);
+            
+            return false;
+        }
         
-        return $legajoDias;
+        $legajoDias = $this->agruparDiasLegajos($legajos, $array_lineas);
+        if (empty($legajoDias)) {
+            error_log(date('d-m-Y , h:i:s') . ": Error en AgruparDiasLegajo. \n ", 3, LOGEO);
+            
+            return false;
+        }
+        
+        $listaOrdenada = $this->ordenarPorDia($legajoDias);
+        if (empty($listaOrdenada)) {
+            error_log(date('d-m-Y , h:i:s') . ": Error en OrdenarPorDia. \n ", 3, LOGEO);
+            
+            return false;
+        }
+        
+        $diasTrabajados = $this->traerDias($listaOrdenada);
+        if (empty($diasTrabajados)) {
+            error_log(date('d-m-Y , h:i:s') . ": Error en traerDias. \n ", 3, LOGEO);
+            
+            return false;
+        }
+        
+        $diasCompletos = $this->agruparDiasHoras($legajos, $diasTrabajados, $listaOrdenada, $this->days);
+        
+        if (empty($diasCompletos)) {
+            error_log(date('d-m-Y , h:i:s') . ": Error en agruparDiasHoras. \n ", 3, LOGEO);
+            
+            return false;
+        }
+        
+        // $salida = $this->calcularDiferencia($diasCompletos);
+        // if (empty($salida)) {
+        // error_log(date('d-m-Y , h:i:s') . ": Error en calcularDiferencia. \n ", 3, LOGEO);
+        
+        // return false;
+        // }
+        // echo '<pre>';
+        // print_r($diasCompletos);
+        // die();
+        
+        return $diasCompletos;
+    }
+
+    public function calcularDiferencia(array $fecha)
+    {
+        // $diff = null;
+        // foreach ($fecha as $key => $value) {
+        // foreach ($value as $reKey => $reValue) {
+        // if ($reKey == 'fichada') {
+        
+        // }
+        // }
+        // }
     }
 
     public function agruparDiasLegajos($legajos, $array_lineas)
@@ -114,7 +130,6 @@ class ReportComponent extends Component
 
     public function traerLegajos($array)
     {
-        $legajosDeArchivo = leerArchivoEmpleados();
         $legajos = null;
         // array de legajos
         for ($i = 0; $i < count($array); $i ++) {
@@ -161,6 +176,7 @@ class ReportComponent extends Component
                     $aux = explode(" ", $diaOrdenado);
                     if ($diaTrabajado == $aux[0]) {
                         $arrayAux[$legajo1][$diaTrabajado]['fichada'][$i] = $aux[1];
+                        $arrayAux[$legajo1][$diaTrabajado]['diff'] = '-1';
                         $nom_dia = date('l', strtotime($diaTrabajado));
                         $arrayAux[$legajo1][$diaTrabajado]['nom_dia'] = $days["$nom_dia"];
                         $i ++;
@@ -188,7 +204,7 @@ class ReportComponent extends Component
     {
         $arrayOrdenado = null;
         foreach ($array as $legajo => $val) {
-            $arrayOrdenado[$legajo] = orderListByValue($val);
+            $arrayOrdenado[$legajo] = $this->orderListByValue($val);
         }
         return $arrayOrdenado;
     }
