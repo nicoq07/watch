@@ -34,17 +34,21 @@ $cakeDescription = 'Reporte de Horarios';
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light" data-topbar role="navigation">
-        <ul class="title-area large-3 medium-4 columns">
-            <li class="name">
+        <ul class="list-inline title-area col-12">
+            <li class="list-inline-item col-3">
                 <h1><a href=""><?=$this->fetch('title')?></a></h1>
             </li>
+            <li class="list-inline-item">
+                <h4><a href=""><?=$this->Html->link(h('Empleados'), ['action' => 'index'], ['class' => 'btn btn-dark']);?></a></h4>
+            </li>
+            <li class="list-inline-item">
+                <h4><a href=""><?=$this->Html->link(h('Reporte'), ['action' => 'home'], ['class' => 'btn btn-dark']);?></a></h4>
+            </li>
         </ul>
-                <a  href="#">Alta empleado</a>
-          <a  href="#">Generar reporte</a>
          
     </nav>
     <?=$this->Flash->render()?>
-    <div class="container clearfix">
+    <div class="col-12">
         <?=$this->fetch('content')?>
     </div>
     <footer>

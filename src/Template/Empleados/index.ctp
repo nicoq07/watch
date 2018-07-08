@@ -1,51 +1,52 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \App\Model\Entity\Empleado[]|\Cake\Collection\CollectionInterface $empleados
- */
-?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
+<div class='row'>
+<nav class="col-3" id="sidebar">
     <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('New Empleado'), ['action' => 'add']) ?></li>
+        <li class="list-inline-item"><?=$this->Html->link(__('Nuevo Empleado'), ['action' => 'add'], ['class' => 'btn btn-light'])?> </li>
+        <li class="list-inline-item"><?=$this->Html->link(__('Ir a Reporte'), ['action' => 'home'], ['class' => 'btn btn-light'])?> </li>
     </ul>
 </nav>
-<div class="empleados index large-9 medium-8 columns content">
-    <h3><?= __('Empleados') ?></h3>
-    <table cellpadding="0" cellspacing="0">
+<div class="col-9">
+    <table class='table table-striped'>
         <thead>
             <tr>
-                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('legajo') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('nombre') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('apellido') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
+                <th scope="col"><?=$this->Paginator->sort('id')?></th>
+                <th scope="col"><?=$this->Paginator->sort('Código')?></th>
+                <th scope="col"><?=$this->Paginator->sort('nombre')?></th>
+                <th scope="col"><?=$this->Paginator->sort('apellido')?></th>
+                <th scope="col" class="actions"><?=__('Acciones')?></th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($empleados as $empleado): ?>
+            <?php
+            
+            foreach ($empleados as $empleado) :
+                ?>
             <tr>
-                <td><?= $this->Number->format($empleado->id) ?></td>
-                <td><?= $this->Number->format($empleado->legajo) ?></td>
-                <td><?= h($empleado->nombre) ?></td>
-                <td><?= h($empleado->apellido) ?></td>
+                <td><?=$this->Number->format($empleado->id)?></td>
+                <td><?=h($empleado->legajo)?></td>
+                <td><?=h($empleado->nombre)?></td>
+                <td><?=h($empleado->apellido)?></td>
                 <td class="actions">
-                    <?= $this->Html->link(__('View'), ['action' => 'view', $empleado->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $empleado->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $empleado->id], ['confirm' => __('Are you sure you want to delete # {0}?', $empleado->id)]) ?>
+                    <?=$this->Html->link(__('Editar'), ['action' => 'edit',$empleado->id], ['class' => 'btn btn-sm btn-info'])?>
+                    <?=$this->Form->postLink(__('Borrar'), ['action' => 'delete',$empleado->id], ['class' => 'btn btn-sm btn-danger','confirm' => __('Confirma la eliminacion del empleado {0}?', $empleado->presentacion)])?>
                 </td>
             </tr>
-            <?php endforeach; ?>
+            <?php
+            endforeach
+            ;
+            ?>
         </tbody>
     </table>
     <div class="paginator">
         <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
+            <?=$this->Paginator->first('<< ' . __('Primero'))?>
+            <?=$this->Paginator->prev('< ' . __('Anterior'))?>
+            <?=$this->Paginator->numbers()?>
+            <?=$this->Paginator->next(__('Siguiente') . ' >')?>
+            <?=$this->Paginator->last(__('Último') . ' >>')?>
+            
         </ul>
-        <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
+        <p><?=$this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')])?></p>
     </div>
+</div>
 </div>
