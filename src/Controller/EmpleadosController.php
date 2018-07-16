@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-use Cake\Controller\Component;
 
 /**
  * Empleados Controller
@@ -54,13 +53,13 @@ class EmpleadosController extends AppController
         if ($this->request->is('post')) {
             $empleado = $this->Empleados->patchEntity($empleado, $this->request->getData());
             if ($this->Empleados->save($empleado)) {
-                $this->Flash->success(__('The empleado has been saved.'));
+                $this->Flash->success(__('Empleado guardado.'));
                 
                 return $this->redirect([
                     'action' => 'index'
                 ]);
             }
-            $this->Flash->error(__('The empleado could not be saved. Please, try again.'));
+            $this->Flash->error(__('Ha ocurrido un error, por favor reintente. Sí el error persiste informe al desarrollador.'));
         }
         $this->set(compact('empleado'));
     }
@@ -85,13 +84,13 @@ class EmpleadosController extends AppController
         ])) {
             $empleado = $this->Empleados->patchEntity($empleado, $this->request->getData());
             if ($this->Empleados->save($empleado)) {
-                $this->Flash->success(__('The empleado has been saved.'));
+                $this->Flash->success(__('Acción realizada correctamente.'));
                 
                 return $this->redirect([
                     'action' => 'index'
                 ]);
             }
-            $this->Flash->error(__('The empleado could not be saved. Please, try again.'));
+            $this->Flash->error(__('Ha ocurrido un error, por favor reintente. Sí el error persiste informe al desarrollador.'));
         }
         $this->set(compact('empleado'));
     }
@@ -114,7 +113,7 @@ class EmpleadosController extends AppController
         if ($this->Empleados->delete($empleado)) {
             $this->Flash->success(__('The empleado has been deleted.'));
         } else {
-            $this->Flash->error(__('The empleado could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Ha ocurrido un error, por favor reintente. Sí el error persiste informe al desarrollador.'));
         }
         
         return $this->redirect([
@@ -127,26 +126,34 @@ class EmpleadosController extends AppController
 
     public function procesar()
     {
+        $dirNueva = null;
         $this->autoRender = false;
-        if (! $this->request->getData()['dat']['error'] == 0) {
-            $this->Flash->error('El archivo esta dañado. Pruebe extraer el archivo nuevamente.');
+        if (isset($this->request->getData()['dat'])) {
+            if (! $this->request->getData()['dat']['error'] == 0) {
+                $this->Flash->error('El archivo esta dañado. Pruebe extraer el archivo nuevamente.');
+                return $this->redirect([
+                    'action' => 'home'
+                ]);
+            } else {
+                
+                $nombreArchivo = $this->request->getData()['dat']['name'];
+                $dirArchivo = $this->request->getData()['dat']['tmp_name'];
+                $dirNueva = ROOT . DS . 'files' . DS . date('d-m-Y H.i.s') . $nombreArchivo;
+                // copio a la carpeta files
+                $checkCopy = copy($dirArchivo, $dirNueva);
+                
+                if ($checkCopy) {
+                    error_log(date('d-m-Y , h:i:s') . ": Archivo copiado. \n ", 3, LOGEO);
+                    $this->mostrarReporte($this->laburar($dirNueva));
+                } else {
+                    error_log(date('d-m-Y , h:i:s') . ": No se copió el archivo. \n ", 3, LOGEO);
+                }
+            }
+        } else {
+            $this->Flash->error('Debe seleccionar el archivo nuevamente.');
             return $this->redirect([
                 'action' => 'home'
             ]);
-        } else {
-            
-            $nombreArchivo = $this->request->getData()['dat']['name'];
-            $dirArchivo = $this->request->getData()['dat']['tmp_name'];
-            $dirNueva = ROOT . DS . 'files/' . date('d-m-Y H:i:s') . $nombreArchivo;
-            // copio a la carpeta files
-            $checkCopy = copy($dirArchivo, $dirNueva);
-            
-            if ($checkCopy) {
-                error_log(date('d-m-Y , h:i:s') . ": Archivo copiado. \n ", 3, LOGEO);
-                $this->mostrarReporte($this->laburar($dirNueva));
-            } else {
-                error_log(date('d-m-Y , h:i:s') . ": No se copió el archivo. \n ", 3, LOGEO);
-            }
         }
     }
 
@@ -158,7 +165,7 @@ class EmpleadosController extends AppController
         $this->render('reporte');
     }
 
-    private function laburar(string $dirNueva)
+    private function laburar($dirNueva)
     {
         $listEmpleados = $this->Empleados->find()->toArray();
         
