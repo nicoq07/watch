@@ -48,7 +48,7 @@ foreach ($listado as $empleado => $fechas) :
         		<?=h($fichada['nom_dia']);?>
         	</td>
               <td class="text-center">
-        		<?=h($fecha);?>
+        		<?=h(date("d-m-y", strtotime($fecha)));?>
         	 </td> 
         	 <td  class="text-center">
         		<?=! empty($fichada['fichada'][1]) ? h($fichada['fichada'][1]) : '-';?>
