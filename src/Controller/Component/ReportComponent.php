@@ -35,7 +35,7 @@ class ReportComponent extends Component
         return false;
     }
 
-    public function procesarDat(string $ruta)
+    public function procesarDat($ruta)
     {
         $array_lineas = $this->leerDat($ruta);
         if (empty($array_lineas)) {
