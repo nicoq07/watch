@@ -1,3 +1,5 @@
+<?php $this->assign('title','Reporte'); ?>
+
 <div class='col-12'>
 	<table class='table table-striped'>
 		<thead>
